@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: energy-geopolitics-api
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - APP_PORT=8000
+      - APP_LOG_LEVEL=INFO
+      - LOAD_SEED_DATA=true
+      - CHECKPOINT_DIR=/app/checkpoints
+      - CIRCUIT_BREAKER_FAILURE_THRESHOLD=5
+      - CIRCUIT_BREAKER_RECOVERY_TIMEOUT=60
+      - RETRY_MAX_ATTEMPTS=3
+      - RETRY_BASE_DELAY=2.0
+      # Override with real keys:
+      # - EIA_API_KEY=your_key_here
+      # - NEWS_API_KEY=your_key_here
+    volumes:
+      - checkpoints:/app/checkpoints
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  checkpoints:
+    driver: local
