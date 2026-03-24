@@ -2,608 +2,702 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Energy Geopolitics Intelligence Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EnergyIntel">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
+  <title>Energy Geopolitics Intel</title>
   <style>
     :root {
-      --bg: #0a0e1a;
-      --panel: #111827;
-      --border: #1e2d45;
-      --accent: #f59e0b;
-      --accent2: #3b82f6;
-      --danger: #ef4444;
-      --warn: #f97316;
-      --success: #10b981;
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --critical: #dc2626;
-      --high: #ea580c;
-      --moderate: #ca8a04;
-      --low: #16a34a;
+      --bg:       #0a0e1a;
+      --panel:    #111827;
+      --border:   #1e2d45;
+      --card:     #0f1d2f;
+      --accent:   #f59e0b;
+      --blue:     #3b82f6;
+      --danger:   #ef4444;
+      --warn:     #f97316;
+      --success:  #10b981;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      /* safe area for iPhone notch / home bar */
+      --safe-top:    env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { background: var(--bg); }
+
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
       font-size: 14px;
       line-height: 1.5;
+      padding-bottom: calc(60px + var(--safe-bottom));
+      /* prevent over-scroll bounce revealing white bg */
+      overscroll-behavior: none;
     }
-    /* Header */
+
+    /* ── Header ─────────────────────────────────────────────── */
     header {
-      background: linear-gradient(90deg, #0f172a 0%, #1e3a5f 100%);
+      position: sticky; top: 0; z-index: 200;
+      padding: calc(var(--safe-top) + 10px) 16px 10px;
+      background: linear-gradient(135deg, #0d1b2e 0%, #1a3a5c 100%);
       border-bottom: 1px solid var(--border);
-      padding: 12px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .logo {
-      width: 32px; height: 32px;
-      background: var(--accent);
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-    }
-    h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
-    .subtitle { font-size: 11px; color: var(--muted); }
-    .header-right { display: flex; gap: 12px; align-items: center; }
-    .badge {
-      font-size: 11px; padding: 3px 8px; border-radius: 4px;
-      font-weight: 600; letter-spacing: 0.3px;
-    }
-    .badge-live { background: #14532d; color: #4ade80; }
-    .badge-unclass { background: #1e3a5f; color: #93c5fd; }
-    /* Timestamp */
-    #timestamp { font-size: 11px; color: var(--muted); }
-
-    /* Main layout */
-    main { padding: 20px 24px; max-width: 1600px; margin: 0 auto; }
-    .grid-top { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-    .grid-mid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; margin-bottom: 20px; }
-    .grid-bot { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-    /* Panel */
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-    }
-    .panel-title {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.8px; color: var(--muted); margin-bottom: 14px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .panel-title .refresh-btn {
-      font-size: 11px; color: var(--accent2); cursor: pointer;
-      text-decoration: none; background: none; border: none; padding: 2px 4px;
-    }
-    .panel-title .refresh-btn:hover { text-decoration: underline; }
-
-    /* KPI cards */
-    .kpi { text-align: center; }
-    .kpi-value { font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
-    .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .kpi-sub { font-size: 11px; margin-top: 4px; }
-
-    /* Risk gauge */
-    .risk-gauge { text-align: center; margin-bottom: 8px; }
-    .gauge-ring {
-      width: 100px; height: 100px; margin: 0 auto 10px;
-      border-radius: 50%; position: relative;
+    .logo-row { display: flex; align-items: center; gap: 10px; }
+    .logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--accent);
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; font-weight: 800;
+      font-size: 17px; flex-shrink: 0;
     }
-    .risk-dimensions { display: grid; gap: 6px; }
-    .dim-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-    .dim-label { width: 130px; color: var(--muted); }
-    .dim-bar-bg {
-      flex: 1; height: 6px; background: #1e2d45; border-radius: 3px; overflow: hidden;
+    .app-title  { font-size: 15px; font-weight: 700; line-height: 1.2; }
+    .app-sub    { font-size: 10px; color: var(--muted); }
+    .header-pills { display: flex; gap: 6px; align-items: center; }
+    .pill {
+      font-size: 10px; padding: 2px 7px; border-radius: 20px;
+      font-weight: 600; letter-spacing: 0.3px; white-space: nowrap;
     }
-    .dim-bar { height: 100%; border-radius: 3px; transition: width 0.5s; }
-    .dim-score { width: 36px; text-align: right; font-size: 11px; font-weight: 600; }
+    .pill-live  { background: #14532d; color: #4ade80; }
+    .pill-unc   { background: #1e3a5f; color: #93c5fd; }
 
-    /* Events table */
-    .events-list { display: grid; gap: 8px; }
-    .event-row {
-      background: #0f1d2f; border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 12px;
-      display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start;
+    /* ── Tab bar ────────────────────────────────────────────── */
+    .tab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      padding-bottom: var(--safe-bottom);
+      background: #0d1523;
+      border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(4, 1fr);
     }
-    .event-row:hover { border-color: var(--accent2); }
-    .sev-badge {
-      font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px;
-      text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap;
+    .tab-btn {
+      background: none; border: none; color: var(--muted);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 8px 4px; font-size: 10px; cursor: pointer;
+      gap: 3px; transition: color .15s;
     }
-    .sev-critical { background: #450a0a; color: #fca5a5; }
-    .sev-high { background: #431407; color: #fdba74; }
-    .sev-moderate { background: #422006; color: #fcd34d; }
-    .sev-low { background: #052e16; color: #86efac; }
-    .event-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-    .event-meta { font-size: 11px; color: var(--muted); }
-    .event-impact { font-size: 11px; text-align: right; white-space: nowrap; }
-    .event-impact .bpd { color: var(--warn); font-weight: 600; }
+    .tab-btn.active { color: var(--accent); }
+    .tab-btn svg { width: 22px; height: 22px; }
 
-    /* Price panel */
-    .price-main {
-      display: flex; gap: 20px; margin-bottom: 16px; align-items: center;
-    }
-    .price-item { }
-    .price-name { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px; }
-    .price-val { font-size: 24px; font-weight: 800; }
-    .price-chg { font-size: 12px; }
-    .up { color: var(--success); }
-    .down { color: var(--danger); }
-    .price-history { display: flex; gap: 2px; height: 40px; align-items: flex-end; }
-    .price-bar-w { flex: 1; display: flex; align-items: flex-end; }
-    .price-bar {
-      width: 100%; border-radius: 2px 2px 0 0;
-      background: var(--accent2); opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-    .price-bar:hover { opacity: 1; }
+    /* ── Pages ──────────────────────────────────────────────── */
+    .page { display: none; padding: 14px 12px; }
+    .page.active { display: block; }
 
-    /* Regional table */
-    .region-table { width: 100%; border-collapse: collapse; }
-    .region-table th {
-      font-size: 10px; text-transform: uppercase; color: var(--muted);
-      padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border);
+    /* ── KPI strip ──────────────────────────────────────────── */
+    .kpi-row {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 10px; margin-bottom: 14px;
     }
-    .region-table td { padding: 8px 8px; font-size: 12px; border-bottom: 1px solid #0f1d2f; }
-    .region-table tr:last-child td { border-bottom: none; }
+    .kpi-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 4px; }
+    .kpi-value { font-size: 26px; font-weight: 800; line-height: 1; }
+    .kpi-sub   { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    /* ── Section card ───────────────────────────────────────── */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 11px 14px 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: var(--muted); }
+    .card-action {
+      font-size: 11px; color: var(--blue); background: none;
+      border: none; cursor: pointer; padding: 2px;
+    }
+
+    /* ── Event rows ─────────────────────────────────────────── */
+    .event-item {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .event-item:last-child { border-bottom: none; }
+    .sev {
+      font-size: 9px; font-weight: 700; padding: 3px 6px;
+      border-radius: 4px; text-transform: uppercase;
+      letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .sev-critical { background:#450a0a; color:#fca5a5; }
+    .sev-high     { background:#431407; color:#fdba74; }
+    .sev-moderate { background:#422006; color:#fcd34d; }
+    .sev-low      { background:#052e16; color:#86efac; }
+
+    .event-body { flex: 1; min-width: 0; }
+    .event-title { font-size: 13px; font-weight: 600; line-height: 1.3; margin-bottom: 2px; }
+    .event-meta  { font-size: 11px; color: var(--muted); }
+    .event-impact { font-size: 11px; color: var(--warn); font-weight: 600; white-space: nowrap; }
+
+    /* ── Risk dimensions ────────────────────────────────────── */
+    .dim-row {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .dim-row:last-child { border-bottom: none; }
+    .dim-label { width: 120px; font-size: 12px; flex-shrink: 0; }
+    .dim-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .dim-fill  { height: 100%; border-radius: 3px; }
+    .dim-score { width: 34px; text-align: right; font-size: 11px; font-weight: 600; }
+
+    /* ── Regional table ─────────────────────────────────────── */
+    .region-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .region-item:last-child { border-bottom: none; }
+    .region-name { font-size: 13px; font-weight: 600; }
+    .region-meta { font-size: 11px; color: var(--muted); }
     .risk-pill {
-      font-size: 10px; font-weight: 700; padding: 2px 7px;
-      border-radius: 20px; text-transform: uppercase;
+      font-size: 10px; font-weight: 700; padding: 3px 8px;
+      border-radius: 20px; text-transform: uppercase; flex-shrink: 0;
     }
-    .risk-critical { background: #450a0a; color: #fca5a5; }
-    .risk-high { background: #431407; color: #fdba74; }
-    .risk-moderate { background: #422006; color: #fcd34d; }
-    .risk-low { background: #052e16; color: #86efac; }
-    .risk-minimal { background: #1e2d45; color: var(--muted); }
+    .rp-critical { background:#450a0a; color:#fca5a5; }
+    .rp-high     { background:#431407; color:#fdba74; }
+    .rp-moderate { background:#422006; color:#fcd34d; }
+    .rp-low      { background:#052e16; color:#86efac; }
+    .rp-minimal  { background:#1e2d45; color:var(--muted); }
 
-    /* Alerts */
-    .alert-list { display: grid; gap: 8px; }
-    .alert-row {
-      background: #0f1d2f; border-left: 3px solid; border-radius: 0 6px 6px 0;
-      padding: 10px 12px; display: flex; justify-content: space-between; align-items: start;
+    /* ── Alerts ─────────────────────────────────────────────── */
+    .alert-item {
+      border-left: 3px solid;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
     }
-    .alert-critical { border-color: var(--critical); }
-    .alert-high { border-color: var(--warn); }
-    .alert-warning { border-color: var(--accent); }
-    .alert-info { border-color: var(--accent2); }
-    .alert-title { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
-    .alert-msg { font-size: 11px; color: var(--muted); }
+    .alert-item:last-child { border-bottom: none; }
+    .alert-critical { border-color: var(--danger); }
+    .alert-high     { border-color: var(--warn); }
+    .alert-warning  { border-color: var(--accent); }
+    .alert-info     { border-color: var(--blue); }
+    .alert-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .alert-msg   { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
     .ack-btn {
-      font-size: 10px; color: var(--accent2); cursor: pointer;
-      background: none; border: 1px solid var(--accent2);
-      border-radius: 4px; padding: 2px 8px; white-space: nowrap;
+      font-size: 11px; color: var(--blue); background: none;
+      border: 1px solid var(--blue); border-radius: 6px;
+      padding: 3px 10px; cursor: pointer;
     }
-    .ack-btn:hover { background: var(--accent2); color: #0a0e1a; }
+    .empty { padding: 24px 14px; text-align: center; color: var(--muted); font-size: 13px; }
 
-    /* Assets */
-    .asset-list { display: grid; gap: 6px; }
-    .asset-row {
-      background: #0f1d2f; border: 1px solid var(--border);
-      border-radius: 6px; padding: 8px 12px;
-      display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center;
+    /* ── Assets ─────────────────────────────────────────────── */
+    .asset-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 6px; align-items: start;
     }
-    .asset-name { font-size: 12px; font-weight: 600; }
-    .asset-loc { font-size: 11px; color: var(--muted); }
-    .asset-output { font-size: 11px; text-align: right; color: var(--accent); }
-    .status-dot {
-      width: 8px; height: 8px; border-radius: 50%;
+    .asset-item:last-child { border-bottom: none; }
+    .asset-name   { font-size: 13px; font-weight: 600; }
+    .asset-detail { font-size: 11px; color: var(--muted); }
+    .asset-right  { text-align: right; }
+    .asset-bpd    { font-size: 12px; color: var(--accent); font-weight: 600; }
+    .dot {
+      display: inline-block; width: 8px; height: 8px;
+      border-radius: 50%; margin-right: 4px;
     }
     .dot-operational { background: var(--success); }
-    .dot-degraded { background: var(--warn); }
-    .dot-offline { background: var(--danger); }
-    .dot-under_threat { background: var(--critical); }
-    .dot-sanctioned { background: var(--muted); }
+    .dot-degraded    { background: var(--warn); }
+    .dot-offline     { background: var(--danger); }
+    .dot-under_threat{ background: #dc2626; }
+    .dot-sanctioned  { background: var(--muted); }
 
-    /* Loading */
-    .loading { text-align: center; padding: 40px; color: var(--muted); }
-    .error-msg { color: var(--danger); font-size: 12px; text-align: center; padding: 12px; }
+    /* ── Price chart ────────────────────────────────────────── */
+    .price-header {
+      padding: 12px 14px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px; border-bottom: 1px solid var(--border);
+    }
+    .price-block .p-name { font-size: 9px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px; }
+    .price-block .p-val  { font-size: 20px; font-weight: 800; }
+    .price-block .p-chg  { font-size: 11px; }
+    .up   { color: var(--success); }
+    .down { color: var(--danger); }
+    .bar-chart {
+      padding: 10px 14px 4px;
+      display: flex; gap: 3px; height: 56px; align-items: flex-end;
+    }
+    .bar-wrap { flex: 1; display: flex; align-items: flex-end; }
+    .bar {
+      width: 100%; border-radius: 2px 2px 0 0;
+      transition: opacity .2s;
+    }
 
-    /* Scrollable sections */
-    .scrollable { max-height: 320px; overflow-y: auto; }
-    .scrollable::-webkit-scrollbar { width: 4px; }
-    .scrollable::-webkit-scrollbar-track { background: transparent; }
-    .scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    /* ── Recovery status ────────────────────────────────────── */
+    .collector-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .collector-item:last-child { border-bottom: none; }
+    .c-name   { font-size: 13px; font-weight: 600; }
+    .c-detail { font-size: 11px; color: var(--muted); }
+    .circuit-badge {
+      font-size: 10px; font-weight: 700; padding: 3px 8px;
+      border-radius: 20px; text-transform: uppercase;
+    }
+    .cb-closed    { background:#052e16; color:#4ade80; }
+    .cb-open      { background:#450a0a; color:#fca5a5; }
+    .cb-half_open { background:#422006; color:#fcd34d; }
+    .cb-no_circuit{ background:#1e2d45; color:var(--muted); }
 
-    @media (max-width: 1200px) {
-      .grid-top { grid-template-columns: repeat(2, 1fr); }
-      .grid-mid, .grid-bot { grid-template-columns: 1fr; }
+    /* ── Spinner ────────────────────────────────────────────── */
+    .spin {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--border); border-top-color: var(--blue);
+      animation: spin .6s linear infinite;
+      margin: 24px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Timestamp bar ──────────────────────────────────────── */
+    .ts-bar {
+      font-size: 10px; color: var(--muted);
+      text-align: center; padding: 6px 0 2px;
     }
   </style>
 </head>
 <body>
 
+<!-- ── Header ──────────────────────────────────────────────── -->
 <header>
-  <div class="header-left">
+  <div class="logo-row">
     <div class="logo">⚡</div>
     <div>
-      <h1>Energy Geopolitics Intelligence Platform</h1>
-      <div class="subtitle">Oil &amp; Gas — Real-time Risk Intelligence</div>
+      <div class="app-title">Energy Geopolitics Intel</div>
+      <div class="app-sub">Oil &amp; Gas Risk Intelligence</div>
     </div>
   </div>
-  <div class="header-right">
-    <span class="badge badge-live">● LIVE</span>
-    <span class="badge badge-unclass">UNCLASSIFIED</span>
-    <span id="timestamp">Loading...</span>
+  <div class="header-pills">
+    <span class="pill pill-live">● LIVE</span>
+    <span class="pill pill-unc">UNCLASS</span>
   </div>
 </header>
 
-<main>
-  <!-- KPI Row -->
-  <div class="grid-top">
-    <div class="panel kpi" id="kpi-risk">
-      <div class="panel-title">Global Risk Score</div>
-      <div class="kpi-value" id="global-score">—</div>
-      <div class="kpi-label" id="global-level">Loading...</div>
-      <div class="kpi-sub" id="global-trend"></div>
+<!-- ── Pages ───────────────────────────────────────────────── -->
+
+<!-- Overview -->
+<div id="page-overview" class="page active">
+  <div class="ts-bar" id="ts">Loading...</div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Global Risk</div>
+      <div class="kpi-value" id="kpi-score" style="color:var(--warn)">—</div>
+      <div class="kpi-sub" id="kpi-level">Loading...</div>
     </div>
-    <div class="panel kpi" id="kpi-events">
-      <div class="panel-title">Active Events</div>
-      <div class="kpi-value" id="event-count">—</div>
-      <div class="kpi-label">Monitored</div>
-      <div class="kpi-sub" id="event-breakdown"></div>
+    <div class="kpi-card">
+      <div class="kpi-label">Brent Crude</div>
+      <div class="kpi-value" id="kpi-brent">—</div>
+      <div class="kpi-sub" id="kpi-brent-chg">—</div>
     </div>
-    <div class="panel kpi" id="kpi-supply">
-      <div class="panel-title">Supply at Risk</div>
-      <div class="kpi-value" id="supply-risk">—</div>
-      <div class="kpi-label">Barrels / Day</div>
-      <div class="kpi-sub" id="supply-pct"></div>
+    <div class="kpi-card">
+      <div class="kpi-label">Supply at Risk</div>
+      <div class="kpi-value" id="kpi-supply" style="color:var(--danger)">—</div>
+      <div class="kpi-sub" id="kpi-supply-pct">of global</div>
     </div>
-    <div class="panel kpi" id="kpi-price">
-      <div class="panel-title">Brent Crude</div>
-      <div class="kpi-value" id="brent-price">—</div>
-      <div class="kpi-label">USD / bbl</div>
-      <div class="kpi-sub" id="brent-chg"></div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Events</div>
+      <div class="kpi-value" id="kpi-events">—</div>
+      <div class="kpi-sub" id="kpi-events-sub">—</div>
     </div>
   </div>
 
-  <!-- Mid row: Risk detail + Events -->
-  <div class="grid-mid">
-    <div class="panel">
-      <div class="panel-title">
-        Active Geopolitical Events
-        <button class="refresh-btn" onclick="loadEvents()">↻ Refresh</button>
-      </div>
-      <div class="scrollable events-list" id="events-list">
-        <div class="loading">Loading events...</div>
-      </div>
+  <!-- Risk Dimensions -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Risk Dimensions</span>
+      <span id="risk-trend" style="font-size:11px;color:var(--muted)"></span>
     </div>
-    <div class="panel">
-      <div class="panel-title">Risk Dimensions</div>
-      <div id="risk-dimensions">
-        <div class="loading">Loading...</div>
-      </div>
-    </div>
+    <div id="dims"><div class="spin"></div></div>
   </div>
 
-  <!-- Bottom row: Regional risk + Assets + Alerts -->
-  <div class="grid-bot">
-    <div class="panel">
-      <div class="panel-title">
-        Regional Risk Overview
-        <button class="refresh-btn" onclick="loadRegional()">↻ Refresh</button>
-      </div>
-      <table class="region-table" id="region-table">
-        <thead>
-          <tr>
-            <th>Region</th>
-            <th>Risk</th>
-            <th>Events</th>
-            <th>Supply at Risk</th>
-          </tr>
-        </thead>
-        <tbody id="region-tbody">
-          <tr><td colspan="4" class="loading">Loading...</td></tr>
-        </tbody>
-      </table>
+  <!-- Top Events -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Top Active Events</span>
+      <button class="card-action" onclick="loadOverview()">↻</button>
     </div>
-    <div class="panel">
-      <div class="panel-title">
-        Unacknowledged Alerts
-        <button class="refresh-btn" onclick="loadAlerts()">↻ Refresh</button>
-      </div>
-      <div class="scrollable alert-list" id="alerts-list">
-        <div class="loading">Loading alerts...</div>
-      </div>
+    <div id="top-events"><div class="spin"></div></div>
+  </div>
+</div>
+
+<!-- Events -->
+<div id="page-events" class="page">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Geopolitical Events</span>
+      <button class="card-action" onclick="loadEvents()">↻</button>
     </div>
+    <div id="events-list"><div class="spin"></div></div>
+  </div>
+</div>
+
+<!-- Intelligence -->
+<div id="page-intel" class="page">
+  <!-- Alerts -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Unacknowledged Alerts</span>
+      <button class="card-action" onclick="loadIntel()">↻</button>
+    </div>
+    <div id="alerts-list"><div class="spin"></div></div>
   </div>
 
-  <div style="margin-top: 20px;">
-    <div class="grid-bot">
-      <div class="panel">
-        <div class="panel-title">
-          Strategic Assets
-          <button class="refresh-btn" onclick="loadAssets()">↻ Refresh</button>
-        </div>
-        <div class="scrollable asset-list" id="assets-list">
-          <div class="loading">Loading assets...</div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-title">
-          Price History (Brent Crude)
-          <button class="refresh-btn" onclick="loadPrices()">↻ Refresh</button>
-        </div>
-        <div id="price-chart-area">
-          <div class="price-main" id="price-main">
-            <div class="loading">Loading prices...</div>
-          </div>
-          <div class="price-history" id="price-history-bars"></div>
-        </div>
-      </div>
+  <!-- Regional Risk -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Regional Risk</span>
     </div>
+    <div id="regional-list"><div class="spin"></div></div>
   </div>
-</main>
+
+  <!-- Price History -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">Market Prices</span></div>
+    <div id="price-header" class="price-header"></div>
+    <div id="bar-chart" class="bar-chart"></div>
+  </div>
+</div>
+
+<!-- Assets & Recovery -->
+<div id="page-assets" class="page">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Strategic Assets</span>
+      <button class="card-action" onclick="loadAssets()">↻</button>
+    </div>
+    <div id="assets-list"><div class="spin"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Recovery Stack</span>
+      <button class="card-action" onclick="loadRecovery()">↻</button>
+    </div>
+    <div id="recovery-list"><div class="spin"></div></div>
+  </div>
+</div>
+
+<!-- ── Tab Bar ──────────────────────────────────────────────── -->
+<nav class="tab-bar">
+  <button class="tab-btn active" id="tab-overview" onclick="showTab('overview')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/>
+    </svg>
+    Overview
+  </button>
+  <button class="tab-btn" id="tab-events" onclick="showTab('events')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+    </svg>
+    Events
+  </button>
+  <button class="tab-btn" id="tab-intel" onclick="showTab('intel')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    Intel
+  </button>
+  <button class="tab-btn" id="tab-assets" onclick="showTab('assets')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <rect x="2" y="7" width="20" height="14" rx="2"/>
+      <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+    </svg>
+    Assets
+  </button>
+</nav>
 
 <script>
 const API = '/api/v1';
 
-function fmt(n) {
-  if (n === null || n === undefined) return '—';
-  if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
-  if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
-  return n.toFixed(0);
+// ── Tab navigation ────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'overview') loadOverview();
+  if (name === 'events')   loadEvents();
+  if (name === 'intel')    loadIntel();
+  if (name === 'assets')   { loadAssets(); loadRecovery(); }
 }
 
-function riskClass(level) {
-  const map = { critical: 'risk-critical', high: 'risk-high', moderate: 'risk-moderate', low: 'risk-low', minimal: 'risk-minimal' };
-  return map[level] || 'risk-minimal';
+// ── Helpers ───────────────────────────────────────────────────
+function fmt(n) {
+  if (n == null) return '—';
+  if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (Math.abs(n) >= 1e3) return (n/1e3).toFixed(0)+'K';
+  return Math.round(n).toString();
 }
-function sevClass(sev) {
-  const map = { critical: 'sev-critical', high: 'sev-high', moderate: 'sev-moderate', low: 'sev-low' };
-  return map[sev] || 'sev-low';
-}
-function alertClass(sev) {
-  const map = { critical: 'alert-critical', high: 'alert-high', warning: 'alert-warning', info: 'alert-info' };
-  return map[sev] || 'alert-info';
-}
-function statusDot(s) {
-  const map = { operational: 'dot-operational', degraded: 'dot-degraded', offline: 'dot-offline', under_threat: 'dot-under_threat', sanctioned: 'dot-sanctioned' };
-  return map[s] || 'dot-operational';
-}
-function dimColor(score) {
-  if (score >= 0.7) return '#ef4444';
-  if (score >= 0.5) return '#f97316';
-  if (score >= 0.3) return '#f59e0b';
+function dimColor(s) {
+  if (s >= .7) return '#ef4444';
+  if (s >= .5) return '#f97316';
+  if (s >= .3) return '#f59e0b';
   return '#10b981';
 }
-function scoreColor(score) {
-  if (score >= 0.85) return '#ef4444';
-  if (score >= 0.70) return '#ea580c';
-  if (score >= 0.45) return '#ca8a04';
-  if (score >= 0.20) return '#16a34a';
+function scoreColor(s) {
+  if (s >= .85) return '#ef4444';
+  if (s >= .70) return '#ea580c';
+  if (s >= .45) return '#ca8a04';
+  if (s >= .20) return '#16a34a';
   return '#64748b';
 }
-
-async function fetchJSON(url) {
+function rpClass(l) {
+  return {'critical':'rp-critical','high':'rp-high','moderate':'rp-moderate','low':'rp-low','minimal':'rp-minimal'}[l]||'rp-minimal';
+}
+function sevClass(s) {
+  return {'critical':'sev-critical','high':'sev-high','moderate':'sev-moderate','low':'sev-low'}[s]||'sev-low';
+}
+function alertClass(s) {
+  return {'critical':'alert-critical','high':'alert-high','warning':'alert-warning','info':'alert-info'}[s]||'alert-info';
+}
+function dotClass(s) {
+  return {'operational':'dot-operational','degraded':'dot-degraded','offline':'dot-offline','under_threat':'dot-under_threat','sanctioned':'dot-sanctioned'}[s]||'dot-operational';
+}
+function cbClass(s) {
+  return {'closed':'cb-closed','open':'cb-open','half_open':'cb-half_open','no_circuit':'cb-no_circuit'}[s]||'cb-no_circuit';
+}
+async function api(path) {
   try {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return await r.json();
-  } catch (e) {
-    console.error('fetch error:', url, e);
-    return null;
-  }
+    const r = await fetch(API + path);
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+  } catch { return null; }
 }
 
-async function loadGlobalRisk() {
-  const data = await fetchJSON(`${API}/intelligence/risk/global`);
-  if (!data) return;
+// ── Overview ──────────────────────────────────────────────────
+async function loadOverview() {
+  document.getElementById('ts').textContent = new Date().toUTCString().replace(' GMT',' UTC');
 
-  const scoreEl = document.getElementById('global-score');
-  const levelEl = document.getElementById('global-level');
-  const trendEl = document.getElementById('global-trend');
-  scoreEl.textContent = data.overall_score.toFixed(2);
-  scoreEl.style.color = scoreColor(data.overall_score);
-  levelEl.textContent = (data.risk_level || '').toUpperCase();
-  trendEl.textContent = '↗ ' + (data.trend || 'stable');
+  const [risk, impact, price, events, summary] = await Promise.all([
+    api('/intelligence/risk/global'),
+    api('/intelligence/impact/global'),
+    api('/intelligence/prices/latest'),
+    api('/events/?limit=5'),
+    api('/events/summary'),
+  ]);
 
-  // Dimensions
-  const dims = [
-    { label: 'Geopolitical', key: 'geopolitical_score' },
-    { label: 'Supply Disruption', key: 'supply_disruption_score' },
-    { label: 'Infrastructure', key: 'infrastructure_score' },
-    { label: 'Sanctions', key: 'sanctions_score' },
-    { label: 'Market Volatility', key: 'market_volatility_score' },
-  ];
-  const container = document.getElementById('risk-dimensions');
-  container.innerHTML = '<div class="risk-dimensions">' +
-    dims.map(d => {
-      const score = data[d.key] || 0;
-      const pct = Math.round(score * 100);
-      const color = dimColor(score);
+  if (risk) {
+    const sc = document.getElementById('kpi-score');
+    sc.textContent = risk.overall_score.toFixed(2);
+    sc.style.color  = scoreColor(risk.overall_score);
+    document.getElementById('kpi-level').textContent =
+      (risk.risk_level||'').toUpperCase() + ' · ' + (risk.trend||'stable');
+    document.getElementById('risk-trend').textContent =
+      risk.trend === 'deteriorating' ? '↗ Deteriorating' :
+      risk.trend === 'improving'     ? '↘ Improving' : '→ Stable';
+
+    const dims = [
+      {l:'Geopolitical',     k:'geopolitical_score'},
+      {l:'Supply Disruption',k:'supply_disruption_score'},
+      {l:'Infrastructure',   k:'infrastructure_score'},
+      {l:'Sanctions',        k:'sanctions_score'},
+      {l:'Mkt Volatility',   k:'market_volatility_score'},
+    ];
+    document.getElementById('dims').innerHTML = dims.map(d => {
+      const s = risk[d.k]||0, c = dimColor(s);
       return `<div class="dim-row">
-        <div class="dim-label">${d.label}</div>
-        <div class="dim-bar-bg"><div class="dim-bar" style="width:${pct}%;background:${color}"></div></div>
-        <div class="dim-score" style="color:${color}">${score.toFixed(2)}</div>
+        <span class="dim-label">${d.l}</span>
+        <div class="dim-track"><div class="dim-fill" style="width:${s*100}%;background:${c}"></div></div>
+        <span class="dim-score" style="color:${c}">${s.toFixed(2)}</span>
       </div>`;
-    }).join('') + '</div>';
+    }).join('');
+  }
+
+  if (impact) {
+    document.getElementById('kpi-supply').textContent = fmt(impact.total_supply_at_risk_bpd);
+    document.getElementById('kpi-supply-pct').textContent =
+      (impact.pct_of_global_supply||0).toFixed(1) + '% of global';
+  }
+
+  if (price) {
+    document.getElementById('kpi-brent').textContent = '$'+(price.brent_crude_usd||0).toFixed(2);
+    const chg = price.change_24h_pct;
+    const up  = chg >= 0;
+    document.getElementById('kpi-brent-chg').innerHTML = chg != null
+      ? `<span class="${up?'up':'down'}">${up?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</span>` : '—';
+  }
+
+  if (summary) {
+    document.getElementById('kpi-events').textContent = summary.active||0;
+    const bs = summary.by_severity||{};
+    document.getElementById('kpi-events-sub').textContent =
+      `${bs.critical||0}crit · ${bs.high||0}high`;
+  }
+
+  if (events && events.length) {
+    document.getElementById('top-events').innerHTML = events.map(e => `
+      <div class="event-item">
+        <span class="sev ${sevClass(e.severity)}">${e.severity}</span>
+        <div class="event-body">
+          <div class="event-title">${e.title}</div>
+          <div class="event-meta">${(e.event_type||'').replace(/_/g,' ')} · ${e.country}</div>
+        </div>
+        ${e.supply_impact_bpd > 0 ? `<span class="event-impact">${fmt(e.supply_impact_bpd)}<br>bpd</span>` : ''}
+      </div>`).join('');
+  }
 }
 
-async function loadImpact() {
-  const data = await fetchJSON(`${API}/intelligence/impact/global`);
-  if (!data) return;
-
-  const supplyEl = document.getElementById('supply-risk');
-  const pctEl = document.getElementById('supply-pct');
-  supplyEl.textContent = fmt(data.total_supply_at_risk_bpd);
-  pctEl.textContent = `${data.pct_of_global_supply?.toFixed(1)}% of global demand`;
-}
-
+// ── Events ────────────────────────────────────────────────────
 async function loadEvents() {
-  const data = await fetchJSON(`${API}/events/?limit=30`);
-  const summaryData = await fetchJSON(`${API}/events/summary`);
-  if (summaryData) {
-    const el = document.getElementById('event-count');
-    el.textContent = summaryData.active || 0;
-    const bs = summaryData.by_severity || {};
-    document.getElementById('event-breakdown').textContent =
-      `${bs.critical || 0} critical · ${bs.high || 0} high · ${bs.moderate || 0} moderate`;
-  }
-  if (!data) return;
-
-  const container = document.getElementById('events-list');
-  if (!data.length) { container.innerHTML = '<div class="loading">No active events</div>'; return; }
-
-  container.innerHTML = data.map(e => {
-    const impact = e.supply_impact_bpd && e.supply_impact_bpd > 0
-      ? `<div class="bpd">${fmt(e.supply_impact_bpd)} bpd</div>`
-      : '';
-    const pImpact = e.price_impact_pct
-      ? `<div style="color:var(--muted)">${e.price_impact_pct > 0 ? '+' : ''}${e.price_impact_pct}% price</div>` : '';
-    return `<div class="event-row">
-      <span class="sev-badge ${sevClass(e.severity)}">${e.severity}</span>
-      <div>
+  const data = await api('/events/?limit=50');
+  const el = document.getElementById('events-list');
+  if (!data || !data.length) { el.innerHTML = '<div class="empty">No events</div>'; return; }
+  el.innerHTML = data.map(e => `
+    <div class="event-item">
+      <span class="sev ${sevClass(e.severity)}">${e.severity}</span>
+      <div class="event-body">
         <div class="event-title">${e.title}</div>
-        <div class="event-meta">${e.event_type.replace(/_/g, ' ')} · ${e.country} · ${e.region}</div>
+        <div class="event-meta">${(e.event_type||'').replace(/_/g,' ')} · ${e.country} · ${e.region}</div>
       </div>
-      <div class="event-impact">${impact}${pImpact}</div>
-    </div>`;
-  }).join('');
+      ${e.supply_impact_bpd > 0 ? `<span class="event-impact">${fmt(e.supply_impact_bpd)}<br>bpd</span>` : ''}
+    </div>`).join('');
 }
 
-async function loadRegional() {
-  const data = await fetchJSON(`${API}/intelligence/risk/regional`);
-  if (!data) return;
+// ── Intel ─────────────────────────────────────────────────────
+async function loadIntel() {
+  const [alerts, regional, latest, history] = await Promise.all([
+    api('/intelligence/alerts?acknowledged=false&limit=10'),
+    api('/intelligence/risk/regional'),
+    api('/intelligence/prices/latest'),
+    api('/intelligence/prices/history?limit=20'),
+  ]);
 
-  const tbody = document.getElementById('region-tbody');
-  tbody.innerHTML = data.slice(0, 10).map(r => `
-    <tr>
-      <td>${r.region}</td>
-      <td><span class="risk-pill ${riskClass(r.risk_level)}">${r.risk_level}</span></td>
-      <td>${r.active_events}</td>
-      <td>${fmt(r.total_supply_at_risk_bpd)} bpd</td>
-    </tr>
-  `).join('');
-}
-
-async function loadAlerts() {
-  const data = await fetchJSON(`${API}/intelligence/alerts?acknowledged=false&limit=10`);
-  if (!data) return;
-
-  const container = document.getElementById('alerts-list');
-  if (!data.length) {
-    container.innerHTML = '<div class="loading" style="color:var(--success)">✓ No unacknowledged alerts</div>';
-    return;
-  }
-  container.innerHTML = data.map(a => `
-    <div class="alert-row ${alertClass(a.severity)}">
-      <div>
+  // Alerts
+  const alEl = document.getElementById('alerts-list');
+  if (!alerts || !alerts.length) {
+    alEl.innerHTML = '<div class="empty" style="color:var(--success)">✓ No unacknowledged alerts</div>';
+  } else {
+    alEl.innerHTML = alerts.map(a => `
+      <div class="alert-item ${alertClass(a.severity)}">
         <div class="alert-title">${a.title}</div>
         <div class="alert-msg">${a.message}</div>
-      </div>
-      <button class="ack-btn" onclick="acknowledgeAlert('${a.id}', this)">ACK</button>
-    </div>
-  `).join('');
-}
-
-async function acknowledgeAlert(id, btn) {
-  const r = await fetch(`${API}/intelligence/alerts/${id}/acknowledge`, { method: 'PATCH' });
-  if (r.ok) {
-    btn.closest('.alert-row').style.opacity = '0.3';
-    btn.disabled = true;
-    btn.textContent = '✓';
-    setTimeout(loadAlerts, 1500);
+        <button class="ack-btn" onclick="ackAlert('${a.id}',this)">Acknowledge</button>
+      </div>`).join('');
   }
-}
 
-async function loadAssets() {
-  const data = await fetchJSON(`${API}/assets/?min_importance=0.5`);
-  if (!data) return;
+  // Regional
+  const rEl = document.getElementById('regional-list');
+  if (!regional || !regional.length) { rEl.innerHTML = '<div class="empty">No data</div>'; }
+  else {
+    rEl.innerHTML = regional.slice(0,8).map(r => `
+      <div class="region-item">
+        <div>
+          <div class="region-name">${r.region}</div>
+          <div class="region-meta">${r.active_events} events · ${fmt(r.total_supply_at_risk_bpd)} bpd</div>
+        </div>
+        <span class="risk-pill ${rpClass(r.risk_level)}">${r.risk_level}</span>
+      </div>`).join('');
+  }
 
-  const container = document.getElementById('assets-list');
-  container.innerHTML = data.map(a => `
-    <div class="asset-row">
-      <div>
-        <div class="asset-name">${a.name}</div>
-        <div class="asset-loc">${a.asset_type.replace(/_/g, ' ')} · ${a.country}</div>
-      </div>
-      <div class="asset-output">
-        ${a.current_output_bpd ? fmt(a.current_output_bpd) + ' bpd' : '—'}
-      </div>
-      <div class="status-dot ${statusDot(a.status)}" title="${a.status}"></div>
-    </div>
-  `).join('');
-}
-
-async function loadPrices() {
-  const latest = await fetchJSON(`${API}/intelligence/prices/latest`);
+  // Prices
   if (latest) {
-    const mainEl = document.getElementById('price-main');
     const chg = latest.change_24h_pct;
-    const chgStr = chg != null
-      ? `<span class="${chg >= 0 ? 'up' : 'down'}">${chg >= 0 ? '▲' : '▼'} ${Math.abs(chg).toFixed(2)}%</span>`
-      : '';
-    mainEl.innerHTML = `
-      <div class="price-item">
-        <div class="price-name">Brent Crude</div>
-        <div class="price-val">$${latest.brent_crude_usd?.toFixed(2) || '—'}</div>
-        <div class="price-chg">${chgStr}</div>
+    document.getElementById('price-header').innerHTML = `
+      <div class="price-block">
+        <div class="p-name">Brent</div>
+        <div class="p-val">$${(latest.brent_crude_usd||0).toFixed(2)}</div>
+        <div class="p-chg">${chg!=null?`<span class="${chg>=0?'up':'down'}">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</span>`:'—'}</div>
       </div>
-      <div class="price-item">
-        <div class="price-name">WTI Crude</div>
-        <div class="price-val">$${latest.wti_crude_usd?.toFixed(2) || '—'}</div>
+      <div class="price-block">
+        <div class="p-name">WTI</div>
+        <div class="p-val">$${(latest.wti_crude_usd||0).toFixed(2)}</div>
       </div>
-      <div class="price-item">
-        <div class="price-name">Natural Gas</div>
-        <div class="price-val">$${latest.natural_gas_usd?.toFixed(2) || '—'}/MMBtu</div>
-      </div>
-    `;
-
-    const brentEl = document.getElementById('brent-price');
-    const brentChgEl = document.getElementById('brent-chg');
-    brentEl.textContent = `$${latest.brent_crude_usd?.toFixed(2) || '—'}`;
-    if (chg != null) {
-      brentChgEl.innerHTML = `<span class="${chg >= 0 ? 'up' : 'down'}">${chg >= 0 ? '▲' : '▼'} ${Math.abs(chg).toFixed(2)}% 24h</span>`;
-    }
+      <div class="price-block">
+        <div class="p-name">Nat Gas</div>
+        <div class="p-val">$${(latest.natural_gas_usd||0).toFixed(2)}</div>
+        <div class="p-chg" style="color:var(--muted);font-size:9px">/MMBtu</div>
+      </div>`;
   }
-
-  const history = await fetchJSON(`${API}/intelligence/prices/history?limit=30`);
   if (history && history.length) {
-    const brentPrices = history.map(p => p.brent_crude_usd).filter(Boolean);
-    const min = Math.min(...brentPrices);
-    const max = Math.max(...brentPrices);
-    const range = max - min || 1;
-    const barsEl = document.getElementById('price-history-bars');
-    barsEl.innerHTML = brentPrices.map(p => {
-      const h = Math.max(4, Math.round(((p - min) / range) * 36) + 4);
-      const color = p >= brentPrices[brentPrices.length - 1] ? '#10b981' : '#3b82f6';
-      return `<div class="price-bar-w"><div class="price-bar" style="height:${h}px;background:${color}" title="$${p.toFixed(2)}"></div></div>`;
+    const prices = history.map(p=>p.brent_crude_usd).filter(Boolean);
+    const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx-mn||1;
+    const last = prices[prices.length-1];
+    document.getElementById('bar-chart').innerHTML = prices.map(p=>{
+      const h = Math.max(4, Math.round(((p-mn)/rng)*44)+4);
+      const c = p >= last ? '#10b981' : '#3b82f6';
+      return `<div class="bar-wrap"><div class="bar" style="height:${h}px;background:${c};opacity:.75" title="$${p.toFixed(2)}"></div></div>`;
     }).join('');
   }
 }
 
-function updateTimestamp() {
-  document.getElementById('timestamp').textContent = new Date().toUTCString().replace(' GMT', ' UTC');
+async function ackAlert(id, btn) {
+  const r = await fetch(`${API}/intelligence/alerts/${id}/acknowledge`, {method:'PATCH'});
+  if (r.ok) { btn.closest('.alert-item').style.opacity='.3'; btn.disabled=true; btn.textContent='✓'; setTimeout(loadIntel,1200); }
 }
 
-async function refreshAll() {
-  updateTimestamp();
-  await Promise.all([
-    loadGlobalRisk(),
-    loadImpact(),
-    loadEvents(),
-    loadRegional(),
-    loadAlerts(),
-    loadAssets(),
-    loadPrices(),
-  ]);
+// ── Assets ────────────────────────────────────────────────────
+async function loadAssets() {
+  const data = await api('/assets/?min_importance=0.5');
+  const el = document.getElementById('assets-list');
+  if (!data||!data.length) { el.innerHTML='<div class="empty">No assets</div>'; return; }
+  el.innerHTML = data.map(a=>`
+    <div class="asset-item">
+      <div>
+        <div class="asset-name">
+          <span class="dot ${dotClass(a.status)}"></span>${a.name}
+        </div>
+        <div class="asset-detail">${(a.asset_type||'').replace(/_/g,' ')} · ${a.country}</div>
+      </div>
+      <div class="asset-right">
+        <div class="asset-bpd">${a.current_output_bpd ? fmt(a.current_output_bpd)+' bpd' : '—'}</div>
+        <div style="font-size:10px;color:var(--muted)">${(a.status||'').replace(/_/g,' ')}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Recovery ──────────────────────────────────────────────────
+async function loadRecovery() {
+  const data = await api('/health/recovery/collectors');
+  const el = document.getElementById('recovery-list');
+  if (!data||!data.length) { el.innerHTML='<div class="empty">No collectors</div>'; return; }
+  el.innerHTML = data.map(c=>`
+    <div class="collector-item">
+      <div>
+        <div class="c-name">${(c.collector_id||'').replace(/_/g,' ')}</div>
+        <div class="c-detail">failures: ${c.consecutive_failures} · last ok: ${c.last_success ? new Date(c.last_success).toLocaleTimeString() : 'never'}</div>
+      </div>
+      <span class="circuit-badge ${cbClass(c.circuit_state)}">${c.circuit_state}</span>
+    </div>`).join('');
+}
+
+// ── Auto-refresh ──────────────────────────────────────────────
+async function refresh() {
+  const active = document.querySelector('.page.active')?.id;
+  if (active === 'page-overview') loadOverview();
+  if (active === 'page-events')   loadEvents();
+  if (active === 'page-intel')    loadIntel();
+  if (active === 'page-assets')   { loadAssets(); loadRecovery(); }
 }
 
 // Initial load
-refreshAll();
+loadOverview();
+setInterval(refresh, 30000);
 
-// Auto-refresh every 30 seconds
-setInterval(refreshAll, 30000);
+// ── Service Worker ────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/static/sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>

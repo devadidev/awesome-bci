@@ -1,0 +1,14 @@
+# Mobile requirements - compatible with iSH (Alpine Linux) and a-Shell
+# Strips heavy/native-compiled deps that don't install on iOS
+
+fastapi==0.115.0
+uvicorn==0.30.6          # plain, no [standard] extras (avoids websockets/uvloop)
+pydantic==2.9.2
+pydantic-settings==2.5.2
+httpx==0.27.2
+tenacity==9.0.0
+python-dateutil==2.9.0
+python-dotenv==1.0.1
+structlog==24.4.0
+anyio==4.6.0
+sniffio==1.3.1
